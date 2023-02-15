@@ -280,7 +280,7 @@ save = True, savestr='tpr'):
     p_y1_cnd_yhatobs = get_obs(p_y1_cnd_yhat1, y)
 
     C = sum(p_y1_jt_yhatobs)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
     m.addConstr(gp.quicksum([w_y1_yhatobs_a[i] * p_y1_cnd_yhatobs[i] for i in range(n) ]) == n, name = 'homogenization') # need to fix the homogenization
@@ -301,11 +301,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += 1.0/n *  gp.quicksum([w_y1_yhatobs_a[i] * p_y1_cnd_yhatobs[i] * y[i] for i in range(n) ])
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -494,7 +494,7 @@ save = True, savestr='tpr'):
     p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = sum(Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     # t = ts[0] # build the model first
     m.addConstr(gp.quicksum([w_y1_yhatobs_a[i] * Y[i] for i in range(n) ]) == n, name = 'homogenization') # need to fix the homogenization
@@ -511,11 +511,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t * n  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += 1.0/n *  gp.quicksum([w_y1_yhatobs_a[i] * Y[i] * Yhat[i] for i in range(n) ])
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -564,15 +564,15 @@ save = True, savestr='tpr'):
     # t = m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS)
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]
     p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]
     p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]
     p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
 
@@ -594,11 +594,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += ( t*C/(t*C - 1.0) * 1.0/n * gp.quicksum([w_y1_yhatobs_a[i] * Y[i] * Yhat[i] for i in range(n) ])  -  np.mean(Yhat*Y) * t/(t*C - 1.0) )
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -677,7 +677,7 @@ save = True, savestr='tpr'):
     p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     if type == 'tpr':
         m.addConstr(gp.quicksum([w_y1_yhatobs_a[i] * Y[i] for i in range(n) ]) == n, name = 'homogenization') # need to fix the homogenization
@@ -700,10 +700,10 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
 
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(t, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(t, gp.GRB.MINIMIZE); m.optimize()
@@ -753,15 +753,15 @@ save = True, savestr='tpr'):
     # t = m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS)
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]
     p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]
     p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]
     p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
 
@@ -783,11 +783,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += ( t*C/(t*C - 1.0) * 1.0/n * gp.quicksum([w_y1_yhatobs_a[i] * Y[i] * Yhat[i] for i in range(n) ])  -  np.mean(Yhat*Y) * t/(t*C - 1.0) )
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -837,12 +837,12 @@ def get_dem_disp_obs_outcomes_multi_race(y, n_as, mu_scalar, p_az, p_yz,
             m.addConstr( w_y1[(a,i)]*p_yz[i] + w_y0[a,i]*(1.0-p_yz[i]) == p_az[i,a]  )
             m.addConstr( gp.quicksum(w_y1[a,i] for a in range(n_as)) == 1 )
             m.addConstr( gp.quicksum(w_y0[a,i] for a in range(n_as)) == 1 )
-    print LIPSCH_CONST
+    print(LIPSCH_CONST)
     if (smoothing1d) and smoothing:
-        print smoothing
+        print(smoothing)
         sort_ind = np.argsort(Z) #returns sort inds in ascending order
         min_incr = np.min(np.diff(Z[sort_ind])[np.diff(Z[sort_ind])!=0])
-        print 'min_incr',min_incr
+        print('min_incr',min_incr)
 
         ### Lipschtiz constraints for all races
         for a in range(n_as):
@@ -903,7 +903,7 @@ def get_dem_disp_obs_outcomes_multi_race(y, n_as, mu_scalar, p_az, p_yz,
     expr = gp.LinExpr();
     # Set a precedent for 1vs. all
     for a in range(n_as)[1:]:
-        print a
+        print(a)
         for i in range(len(y)):
             expr += 1.0/n * mu_scalar[a - 1] *( (w_y1[0,i] * y[i])/p_as[0] - (w_y1[a,i] * y[i])/p_as[a] ) ;
     if direction == 'max':
@@ -987,15 +987,15 @@ save = True, savestr='tpr'):
     # t = m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS)
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]
     p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]
     p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]
     p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
 
@@ -1017,12 +1017,12 @@ save = True, savestr='tpr'):
     #     m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
     #     m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
     #     m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     for a in range(n_as):
         expr += ( t_0s[a]*C/(t_0s[a]*C - 1.0) * 1.0/n * gp.quicksum([w_y1_yhatobs_a[i] * Y[i] * Yhat[i] for i in range(n) ])  -  np.mean(Yhat*Y) * t/(t*C - 1.0) )
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -1069,8 +1069,8 @@ save = True, savestr='tpr'):
     # t = m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS)
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]
     p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]
     p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]
@@ -1078,7 +1078,7 @@ save = True, savestr='tpr'):
 
     C = np.mean(Y)
     C0 = 1-C
-    print 'adding variables'
+    print('adding variables')
     m.update()
 # build the model first
     Y0 = 1-Y
@@ -1095,13 +1095,13 @@ save = True, savestr='tpr'):
 
     for i in range(len(y)):
         m.addConstr( p_y0_jt_yhatobs[i]*w_y0_yhatobs_a[i]/t0 + p_y1_jt_yhatobs[i]*w_y1_yhatobs_a[i]/t1 + p_y1_jt_yhatnotobs[i]*w_y1_yhatnotobs_a[i]/t1 + p_y0_jt_yhatnotobs[i]*w_y0_yhatnotobs_a[i]/t0 == p_a_z[i] , name='LTP'+str(i))
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += lambdas[0]*( t0*C0/(t0*C0 - 1.0) * 1.0/n * gp.quicksum([w_y1_yhatobs_a[i] *(1-Y[i]) * (1-Yhat[i])  for i in range(n) ])  -  np.mean((1-Yhat)*(1-Y)) * t0/(t0*C0 - 1.0) )
     expr += lambdas[1]*( t1*C/(t1*C - 1.0) * 1.0/n * gp.quicksum([w_y0_yhatobs_a[i] * Y[i] * Yhat[i] for i in range(n) ])  -  np.mean(Yhat*Y) * t1/(t1*C - 1.0) )
 
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -1163,12 +1163,12 @@ save = True, savestr='tpr'):
     w_y1_yhatobs_a = [m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS) for yy in y];w_y0_yhatobs_a = [m.addVar( lb = 0.,  vtype=gp.GRB.CONTINUOUS) for yy in y];w_y1_yhatnotobs_a = [m.addVar( lb = 0.,  vtype=gp.GRB.CONTINUOUS) for yy in y];w_y0_yhatnotobs_a = [m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS) for yy in y]
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]; p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]; p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]; p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(1-Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
 
@@ -1190,11 +1190,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += ( t*C/(t*C - 1.0) * 1.0/n * gp.quicksum([w_y0_yhatobs_a[i] * (1-Y[i]) * (1-Yhat[i]) for i in range(n) ])  -  np.mean((1-Yhat)*(1-Y)) * t/(t*C - 1.0) )
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -1280,12 +1280,12 @@ save = True, savestr='tpr'):
     w_y1_yhatnotobs_a = [m.addVar( lb = 0.,  vtype=gp.GRB.CONTINUOUS) for yy in y];w_y0_yhatnotobs_a = [m.addVar( lb = 0., vtype=gp.GRB.CONTINUOUS) for yy in y]
     ## changing: use the definition that t = 1/ E[ w Y=y ], u = w t
     [ p_y1_jt_yhat1, p_y0_jt_yhat1, p_y1_jt_yhat0, p_y0_jt_yhat0 ] = joints
-    print n
-    print len(p_y1_jt_yhat1)
+    print(n)
+    print(len(p_y1_jt_yhat1))
     p_y1_jt_yhatobs = [ p_y1_jt_yhat1[i] if y[i] == 1 else p_y1_jt_yhat0[i] for i in range((n)) ]; p_y0_jt_yhatobs = [ p_y0_jt_yhat1[i] if y[i] == 1 else p_y0_jt_yhat0[i] for i in range((n)) ]; p_y1_jt_yhatnotobs = [ p_y1_jt_yhat0[i] if y[i] == 1 else p_y1_jt_yhat1[i] for i in range((n)) ]; p_y0_jt_yhatnotobs = [ p_y0_jt_yhat0[i] if y[i] == 1 else p_y0_jt_yhat1[i] for i in range((n)) ]
 
     C = np.mean(1-Y)
-    print 'adding variables'
+    print('adding variables')
     m.update()
     t = ts[0] # build the model first
 
@@ -1307,11 +1307,11 @@ save = True, savestr='tpr'):
         m.addConstrs((-w_y0_yhatobs_a[i] + w_y0_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='-L-y=0')
         m.addConstrs((w_y1_yhatobs_a[i] - w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t for i in range(n) for j in range(n)[i:] ) , name='L-y=1')
         m.addConstrs((-w_y1_yhatobs_a[i] + w_y1_yhatobs_a[j] <= LIPSCH_CONST*dists_mat[i,j] * t  for i in range(n) for j in range(n)[i:] ) , name='-L-y=1')
-    print 'adding constraints'
+    print('adding constraints')
     expr = gp.LinExpr();
     expr += ( t*C/(t*C - 1.0) * 1.0/n * gp.quicksum([w_y0_yhatobs_a[i] * (1-Y[i]) * (1-Yhat[i]) for i in range(n) ])  -  np.mean((1-Yhat)*(1-Y)) * t/(t*C - 1.0) )
     if direction=='max':
-        print 'solving'
+        print('solving')
         m.setObjective(expr, gp.GRB.MAXIMIZE); m.optimize()
     else:
         m.setObjective(expr, gp.GRB.MINIMIZE); m.optimize()
@@ -1398,10 +1398,10 @@ def get_dem_disp_obs_outcomes_multi_race_countyincome(y, n_as, mu_scalar, p_az, 
             m.addConstr( w_y1[(a,i)]*p_yz[i] + w_y0[a,i]*(1.0-p_yz[i]) == p_az[i,a]  )
             m.addConstr( gp.quicksum(w_y1[a,i] for a in range(n_as)) == 1 )
             m.addConstr( gp.quicksum(w_y0[a,i] for a in range(n_as)) == 1 )
-    print LIPSCH_CONST
+    print(LIPSCH_CONST)
     levels = np.unique(county)
     if (smoothing1d) and smoothing:
-        print smoothing
+        print(smoothing)
 
     ### Lipschitz constraints for all races
 
@@ -1457,7 +1457,7 @@ def get_dem_disp_obs_outcomes_multi_race_countyincome(y, n_as, mu_scalar, p_az, 
     expr = gp.LinExpr();
     # Set a precedent for 1vs. all
     for a in range(n_as)[1:]:
-        print a
+        print(a)
         for i in range(len(y)):
             expr += 1.0/n * mu_scalar[a - 1] *( (w_y1[0,i] * y[i])/p_as[0] - (w_y1[a,i] * y[i])/p_as[a] ) ;
     if direction == 'max':
@@ -1546,7 +1546,7 @@ LIPSCH_CONST, LAW_TOT_PROB_SLACK=0, quiet=True, smoothing=None,feasibility_relax
         #             print('%s = %g' % (sv.VarName, sv.X))
 
     if (m.status == gp.GRB.OPTIMAL):
-        print 'feasible'
+        print('feasible')
         wghts_ = [w_y1_yhatobs, w_y0_yhatobs, w_y1_yhatnotobs, w_y0_yhatnotobs]
         w_y1_yhatobs_vals = np.asarray([[ w_y1_yhatobs[a,i].X for i in range(n) ] for a in range(n_as)]  )
         w_y0_yhatobs_vals = np.asarray([[ w_y0_yhatobs[a,i].X for i in range(n) ] for a in range(n_as)]  )
@@ -1556,7 +1556,7 @@ LIPSCH_CONST, LAW_TOT_PROB_SLACK=0, quiet=True, smoothing=None,feasibility_relax
         res = [m.ObjVal, wghts__, ts]
         return res
     else:
-        print 'infeasible'
+        print('infeasible')
         return [np.nan, 0, 0]
 
 
@@ -1598,7 +1598,7 @@ LIPSCH_CONST, LAW_TOT_PROB_SLACK=0, quiet=True, smoothing=None,feasibility_relax
     m.update()
     # law of tot prob bounds
     for a in range(n_as):
-        print p_az[i,a]
+        print(p_az[i,a])
 
         m.addConstr(gp.quicksum([w_y0_yhatobs[a,i] * (1-Y[i]) for i in range(n) ]) == n, name = 'homogenization'+str(a)) # need to fix the homogenization
         m.addConstrs((w_y1_yhatobs[a,i]  <= ts[a]  for i in range(n) ), name='Y1Yhatobs')
@@ -1644,7 +1644,7 @@ LIPSCH_CONST, LAW_TOT_PROB_SLACK=0, quiet=True, smoothing=None,feasibility_relax
         #             print('%s = %g' % (sv.VarName, sv.X))
 
     if (m.status == gp.GRB.OPTIMAL):
-        print 'feasible'
+        print('feasible')
         wghts_ = [w_y1_yhatobs, w_y0_yhatobs, w_y1_yhatnotobs, w_y0_yhatnotobs]
         w_y1_yhatobs_vals = np.asarray([[ w_y1_yhatobs[a,i].X for i in range(n) ] for a in range(n_as)]  )
         w_y0_yhatobs_vals = np.asarray([[ w_y0_yhatobs[a,i].X for i in range(n) ] for a in range(n_as)]  )
@@ -1654,7 +1654,7 @@ LIPSCH_CONST, LAW_TOT_PROB_SLACK=0, quiet=True, smoothing=None,feasibility_relax
         res = [m.ObjVal, wghts__, ts]
         return res
     else:
-        print 'infeasible'
+        print('infeasible')
         return [np.nan, 0, 0]
 
 '''
